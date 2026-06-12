@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-black flex items-center justify-center">
@@ -5,10 +7,14 @@ export default function Home() {
         
         {/* Logo */}
         <div className="text-center mb-10">
-          <h1 className="text-white text-4xl font-bold tracking-tight">
-            ORÇAHUB
-          </h1>
-          <p className="text-zinc-500 text-sm mt-2 tracking-widest uppercase">
+          <Image
+            src="/logo.png"
+            alt="ORÇAHUB"
+            width={220}
+            height={80}
+            className="mx-auto"
+          />
+          <p className="text-zinc-500 text-sm mt-3 tracking-widest uppercase">
             Orçamentos inteligentes
           </p>
         </div>
