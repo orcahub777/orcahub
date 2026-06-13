@@ -10,9 +10,10 @@ export default function Home() {
           <Image
             src="/logo.png"
             alt="ORÇAHUB"
-            width={220}
-            height={80}
-            className="mx-auto"
+            width={500}
+            height={120}
+            className="mx-auto w-full max-w-[500px] h-auto"
+            priority
           />
           <p className="text-zinc-500 text-sm mt-3 tracking-widest uppercase">
             Orçamentos inteligentes
