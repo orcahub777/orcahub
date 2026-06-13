@@ -5,27 +5,79 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function Home() {
+export default function Cadastro() {
   const router = useRouter();
+  const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleLogin(e: React.FormEvent) {
+  function slugify(text: string) {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    // 1. Criar usuário no Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
     });
 
+    if (authError) {
+      setLoading(false);
+      setError("Erro ao criar conta: " + authError.message);
+      return;
+    }
+
+    const userId = authData.user?.id;
+
+    if (!userId) {
+      setLoading(false);
+      setError("Não foi possível criar o usuário. Tente novamente.");
+      return;
+    }
+
+    // 2. Criar empresa na tabela companies
+    const slug = slugify(companyName) + "-" + Math.floor(Math.random() * 1000);
+
+    const { data: companyData, error: companyError } = await supabase
+      .from("companies")
+      .insert({
+        name: companyName,
+        slug: slug,
+        plan: "starter",
+      })
+      .select()
+      .single();
+
+    if (companyError) {
+      setLoading(false);
+      setError("Erro ao criar empresa: " + companyError.message);
+      return;
+    }
+
+    // 3. Vincular o usuário à empresa na tabela users
+    const { error: userError } = await supabase.from("users").insert({
+      id: userId,
+      company_id: companyData.id,
+      name: companyName,
+      role: "owner",
+    });
+
     setLoading(false);
 
-    if (error) {
-      setError("Email ou senha incorretos.");
+    if (userError) {
+      setError("Erro ao vincular usuário: " + userError.message);
       return;
     }
 
@@ -47,16 +99,16 @@ export default function Home() {
           />
         </div>
 
-        {/* Card de login */}
+        {/* Card de cadastro */}
         <form
-          onSubmit={handleLogin}
+          onSubmit={handleSignup}
           className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8"
         >
           <h2 className="text-white text-xl font-semibold mb-1">
-            Entrar na plataforma
+            Criar sua conta
           </h2>
           <p className="text-zinc-500 text-sm mb-6">
-            Acesse o painel da sua empresa
+            Comece a usar o ORÇAHUB gratuitamente
           </p>
 
           {/* Erro */}
@@ -65,6 +117,21 @@ export default function Home() {
               {error}
             </div>
           )}
+
+          {/* Nome da empresa */}
+          <div className="mb-4">
+            <label className="text-zinc-400 text-sm mb-1 block">
+              Nome da empresa
+            </label>
+            <input
+              type="text"
+              required
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Minha Empresa"
+              className="w-full bg-zinc-800 border border-zinc-700 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-zinc-500 placeholder-zinc-600"
+            />
+          </div>
 
           {/* Email */}
           <div className="mb-4">
@@ -89,9 +156,10 @@ export default function Home() {
             <input
               type="password"
               required
+              minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Mínimo 6 caracteres"
               className="w-full bg-zinc-800 border border-zinc-700 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-zinc-500 placeholder-zinc-600"
             />
           </div>
@@ -102,15 +170,15 @@ export default function Home() {
             disabled={loading}
             className="w-full bg-white text-black font-semibold rounded-lg py-3 text-sm hover:bg-zinc-200 transition-colors disabled:opacity-50"
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Criando conta..." : "Criar conta grátis"}
           </button>
 
-          {/* Link cadastro */}
+          {/* Link login */}
           <p className="text-center text-zinc-600 text-sm mt-6">
-            Não tem conta?{" "}
-            <a href="/cadastro" className="text-zinc-400 hover:text-white transition-colors">
-  Criar conta grátis
-</a>
+            Já tem conta?{" "}
+            <a href="/" className="text-zinc-400 hover:text-white transition-colors">
+              Entrar
+            </a>
           </p>
         </form>
 
