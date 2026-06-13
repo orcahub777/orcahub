@@ -28,18 +28,27 @@ export default function Cadastro() {
     setLoading(true);
 
     // 1. Criar usuário no Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+   const { data: authData, error: authError } = await supabase.auth.signUp({
+  email,
+  password,
+});
 
-    if (authError) {
-      setLoading(false);
-      setError("Erro ao criar conta: " + authError.message);
-      return;
-    }
+if (authError) {
+  setLoading(false);
+  setError("Erro ao criar conta: " + authError.message);
+  return;
+}
 
-    const userId = authData.user?.id;
+const userId = authData.user?.id;
+
+// Garante que a sessão está ativa antes de continuar
+const { data: sessionData } = await supabase.auth.getSession();
+
+if (!sessionData.session) {
+  setLoading(false);
+  setError("Conta criada, mas sessão não iniciou. Tente fazer login.");
+  return;
+}
 
     if (!userId) {
       setLoading(false);
