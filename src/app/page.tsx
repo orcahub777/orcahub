@@ -37,15 +37,16 @@ export default function Home() {
       <div className="w-full max-w-md px-8">
         
         {/* Logo */}
-        <div className="text-center mb-10">
-          <Image
-            src="/logo.png"
-            alt="ORÇAHUB"
-            width={220}
-            height={80}
-            className="mx-auto"
-          />
-        </div>
+<div className="text-center mb-12">
+  <Image
+    src="/logo.png"
+    alt="ORÇAHUB"
+    width={320}
+    height={116}
+    className="mx-auto"
+    priority
+  />
+</div>
 
         {/* Card de login */}
         <form
