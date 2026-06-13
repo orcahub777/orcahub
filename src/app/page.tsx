@@ -10,14 +10,10 @@ export default function Home() {
           <Image
             src="/logo.png"
             alt="ORÇAHUB"
-            width={500}
-            height={120}
-            className="mx-auto w-full max-w-[500px] h-auto"
-            priority
+            width={220}
+            height={80}
+            className="mx-auto"
           />
-          <p className="text-zinc-500 text-sm mt-3 tracking-widest uppercase">
-            Orçamentos inteligentes
-          </p>
         </div>
 
         {/* Card de login */}
@@ -68,11 +64,4 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-zinc-700 text-xs mt-8">
-          © 2025 ORÇAHUB · Todos os direitos reservados
-        </p>
-
-      </div>
-    </main>
-  );
-}
+        <p className="text-center text-zinc-700 text-xs mt-
