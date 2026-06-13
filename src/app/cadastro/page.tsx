@@ -70,10 +70,12 @@ if (!sessionData.session) {
       .single();
 
     if (companyError) {
-      setLoading(false);
-      setError("Erro ao criar empresa: " + companyError.message);
-      return;
-    }
+  setLoading(false);
+  console.log("ERRO COMPLETO:", JSON.stringify(companyError, null, 2));
+  console.log("USER ID:", userId);
+  setError("Erro ao criar empresa: " + companyError.message + " | Código: " + companyError.code);
+  return;
+}
 
     // 3. Vincular o usuário à empresa na tabela users
     const { error: userError } = await supabase.from("users").insert({
