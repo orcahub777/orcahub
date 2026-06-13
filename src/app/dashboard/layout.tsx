@@ -73,7 +73,7 @@ export default function DashboardLayout({
             href="/dashboard"
             className="block px-3 py-2 rounded-lg text-sm text-zinc-300 hover:bg-zinc-900 hover:text-white transition-colors"
           >
-            Início
+          Inicio
           </a>
           
             href="/dashboard/produtos"
