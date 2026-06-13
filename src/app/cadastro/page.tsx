@@ -59,15 +59,16 @@ if (!sessionData.session) {
     // 2. Criar empresa na tabela companies
     const slug = slugify(companyName) + "-" + Math.floor(Math.random() * 1000);
 
-    const { data: companyData, error: companyError } = await supabase
-      .from("companies")
-      .insert({
-        name: companyName,
-        slug: slug,
-        plan: "starter",
-      })
-      .select()
-      .single();
+   const newCompanyId = crypto.randomUUID();
+
+const { error: companyError } = await supabase
+  .from("companies")
+  .insert({
+    id: newCompanyId,
+    name: companyName,
+    slug: slug,
+    plan: "starter",
+  });
 
     if (companyError) {
   setLoading(false);
@@ -78,12 +79,12 @@ if (!sessionData.session) {
 }
 
     // 3. Vincular o usuário à empresa na tabela users
-    const { error: userError } = await supabase.from("users").insert({
-      id: userId,
-      company_id: companyData.id,
-      name: companyName,
-      role: "owner",
-    });
+   const { error: userError } = await supabase.from("users").insert({
+  id: userId,
+  company_id: newCompanyId,
+  name: companyName,
+  role: "owner",
+});
 
     setLoading(false);
 
